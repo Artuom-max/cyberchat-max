@@ -3,11 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberChat MAX | Футуристический чат</title>
+    <title>CyberChat MAX | Реальный чат</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        /* Стили из предыдущего примера (скопируйте весь CSS блок) */
+        :root {
+            --cyber-primary: #00ff9d;
+            --cyber-secondary: #7700ff;
+            --cyber-accent: #ff0055;
+            --cyber-dark: #0a0a0f;
+            --cyber-gray: #1a1a2e;
+            --cyber-light: #e0e0ff;
+        }
+        
+        /* ... весь CSS код из предыдущего примера ... */
+        /* (скопируйте ВСЕ стили сюда) */
+        
+        /* Дополнительные стили для реального чата */
+        .typing-indicator {
+            color: var(--cyber-primary);
+            font-style: italic;
+            padding: 10px;
+            display: none;
+        }
+        
+        .message.sent {
+            background: rgba(0, 255, 157, 0.1);
+        }
+        
+        .message.received {
+            background: rgba(119, 0, 255, 0.1);
+        }
+    </style>
 </head>
 <body>
     <div class="cyber-container">
@@ -17,8 +45,8 @@
                 <i class="fas fa-satellite-dish"></i>
                 <h1>CYBER<span class="accent">MAX</span>CHAT</h1>
                 <div class="status-indicator">
-                    <div class="pulse"></div>
-                    <span class="online">Онлайн</span>
+                    <div class="pulse" id="connectionStatus"></div>
+                    <span id="statusText">Подключение...</span>
                 </div>
             </div>
             <div class="user-section" id="userSection">
@@ -30,21 +58,26 @@
 
         <!-- Основной контейнер -->
         <main class="main-grid">
-            <!-- Левая панель - Пользователи -->
+            <!-- Левая панель -->
             <aside class="cyber-panel users-panel">
-                <h2><i class="fas fa-users"></i> АКТИВНЫЕ ОПЕРАТОРЫ</h2>
+                <h2><i class="fas fa-users"></i> ОНЛАЙН</h2>
                 <div class="users-list" id="usersList">
-                    <!-- Динамически заполнится -->
-                    <div class="skeleton-user"></div>
-                    <div class="skeleton-user"></div>
-                    <div class="skeleton-user"></div>
+                    <div class="user-card">
+                        <div class="user-avatar">S</div>
+                        <div class="user-info">
+                            <h4>System</h4>
+                            <div class="user-status">
+                                <span class="status-online">●</span> ONLINE
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="panel-stats">
                     <div class="stat">
                         <i class="fas fa-bolt"></i>
                         <div>
-                            <span class="stat-value" id="onlineCount">0</span>
+                            <span class="stat-value" id="onlineCount">1</span>
                             <span class="stat-label">ОНЛАЙН</span>
                         </div>
                     </div>
@@ -65,17 +98,20 @@
                     <div class="channel-info">
                         <span class="channel-tag">#GLOBAL</span>
                         <span class="encryption">
-                            <i class="fas fa-lock"></i> E2E ШИФРОВАНИЕ
+                            <i class="fas fa-lock"></i> ЗАЩИЩЕНО
                         </span>
                     </div>
                 </div>
                 
                 <div class="messages-container" id="messagesContainer">
-                    <!-- Сообщения загрузятся здесь -->
                     <div class="system-message">
                         <i class="fas fa-robot"></i>
-                        <p>Добро пожаловать в CYBERMAX CHAT. Подключитесь к сети...</p>
+                        <p>Загрузка чата...</p>
                     </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    Кто-то печатает...
                 </div>
                 
                 <div class="message-input-container" id="messageInputContainer" style="display: none;">
@@ -89,11 +125,8 @@
                                 maxlength="500"
                             >
                             <div class="input-actions">
-                                <button type="button" class="icon-btn" title="Эмодзи">
+                                <button type="button" class="icon-btn" onclick="toggleEmoji()" title="Эмодзи">
                                     <i class="far fa-smile"></i>
-                                </button>
-                                <button type="button" class="icon-btn" title="Прикрепить файл">
-                                    <i class="fas fa-paperclip"></i>
                                 </button>
                             </div>
                         </div>
@@ -101,127 +134,51 @@
                             <i class="fas fa-paper-plane"></i> ОТПРАВИТЬ
                         </button>
                     </form>
-                    <p class="input-hint">
-                        <i class="fas fa-info-circle"></i> Нажмите Enter для отправки, Shift+Enter для новой строки
-                    </p>
                 </div>
             </section>
 
-            <!-- Правая панель - Инфо -->
+            <!-- Правая панель -->
             <aside class="cyber-panel info-panel">
-                <h2><i class="fas fa-network-wired"></i> СИСТЕМНЫЙ СТАТУС</h2>
+                <h2><i class="fas fa-info-circle"></i> ИНФОРМАЦИЯ</h2>
+                <p>Это реальный чат на Supabase.</p>
+                <p>Сообщения сохраняются в базе данных.</p>
+                <p>Обновляется в реальном времени.</p>
                 
-                <div class="system-status">
-                    <div class="status-item">
-                        <div class="status-indicator active"></div>
-                        <span>СЕРВЕР ХОСТ</span>
-                        <span class="status-value">ONLINE</span>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-indicator active"></div>
-                        <span>БАЗА ДАННЫХ</span>
-                        <span class="status-value">SYNCED</span>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-indicator active"></div>
-                        <span>ШИФРОВАНИЕ</span>
-                        <span class="status-value">AES-256</span>
-                    </div>
-                </div>
-                
-                <div class="rules">
-                    <h3><i class="fas fa-shield-alt"></i> ПРАВИЛА ЧАТА</h3>
-                    <ul>
-                        <li><i class="fas fa-check-circle"></i> Уважайте других</li>
-                        <li><i class="fas fa-check-circle"></i> Без спама</li>
-                        <li><i class="fas fa-check-circle"></i> Конфиденциальность</li>
-                        <li><i class="fas fa-check-circle"></i> Только 18+</li>
-                    </ul>
-                </div>
-                
-                <div class="tech-specs">
-                    <h3><i class="fas fa-microchip"></i> ТЕХНОЛОГИИ</h3>
-                    <div class="spec-grid">
-                        <div class="spec">
-                            <i class="fab fa-js"></i>
-                            <span>JavaScript</span>
-                        </div>
-                        <div class="spec">
-                            <i class="fas fa-bolt"></i>
-                            <span>Supabase</span>
-                        </div>
-                        <div class="spec">
-                            <i class="fab fa-github"></i>
-                            <span>GitHub Pages</span>
-                        </div>
-                        <div class="spec">
-                            <i class="fas fa-wifi"></i>
-                            <span>Realtime</span>
-                        </div>
-                    </div>
+                <div class="control-panel">
+                    <button class="cyber-btn small" onclick="clearLocalMessages()">
+                        <i class="fas fa-trash"></i> Очистить кэш
+                    </button>
+                    <button class="cyber-btn small" onclick="loadTestMessages()">
+                        <i class="fas fa-bolt"></i> Тестовые данные
+                    </button>
                 </div>
             </aside>
         </main>
 
-        <!-- Модалки -->
-        <div id="loginModal" class="cyber-modal">
+        <!-- Модалка входа -->
+        <div id="loginModal" class="cyber-modal" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i class="fas fa-user-astronaut"></i> АУТЕНТИФИКАЦИЯ</h2>
-                    <button class="close-btn" id="closeModal">&times;</button>
+                    <h2><i class="fas fa-user-astronaut"></i> ВХОД В ЧАТ</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
                 </div>
                 
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="login">ВХОД</button>
-                    <button class="tab-btn" data-tab="register">РЕГИСТРАЦИЯ</button>
-                </div>
-                
-                <!-- Форма входа -->
-                <form id="loginForm" class="auth-form active" data-type="login">
-                    <div class="input-group">
-                        <i class="fas fa-at"></i>
-                        <input type="email" id="loginEmail" placeholder="EMAIL АДРЕС" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-key"></i>
-                        <input type="password" id="loginPassword" placeholder="ПАРОЛЬ" required>
-                        <button type="button" class="show-password">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <button type="submit" class="auth-submit">
-                        <i class="fas fa-sign-in-alt"></i> ПОДКЛЮЧИТЬСЯ
-                    </button>
-                </form>
-                
-                <!-- Форма регистрации -->
-                <form id="registerForm" class="auth-form" data-type="register">
+                <div class="auth-form active">
                     <div class="input-group">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="registerUsername" placeholder="ИМЯ ПОЛЬЗОВАТЕЛЯ" required>
-                    </div>
-                    <div class="input-group">
-                        <i class="fas fa-at"></i>
-                        <input type="email" id="registerEmail" placeholder="EMAIL АДРЕС" required>
+                        <input type="text" id="username" placeholder="ВАШЕ ИМЯ" required>
                     </div>
                     <div class="input-group">
                         <i class="fas fa-key"></i>
-                        <input type="password" id="registerPassword" placeholder="ПАРОЛЬ (мин. 6 символов)" required minlength="6">
-                        <button type="button" class="show-password">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                        <input type="password" id="password" placeholder="ПАРОЛЬ (любой)" required>
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-key"></i>
-                        <input type="password" id="registerPasswordConfirm" placeholder="ПОДТВЕРДИТЕ ПАРОЛЬ" required>
-                    </div>
-                    <button type="submit" class="auth-submit">
-                        <i class="fas fa-user-plus"></i> СОЗДАТЬ АККАУНТ
+                    <button type="button" onclick="login()" class="auth-submit">
+                        <i class="fas fa-sign-in-alt"></i> ПОДКЛЮЧИТЬСЯ
                     </button>
-                </form>
+                </div>
                 
                 <div class="auth-footer">
-                    <p><i class="fas fa-exclamation-triangle"></i> Данные защищены E2E шифрованием</p>
+                    <p><i class="fas fa-exclamation-triangle"></i> Пароль не проверяется (демо)</p>
                 </div>
             </div>
         </div>
@@ -229,21 +186,369 @@
         <!-- Футер -->
         <footer class="cyber-footer">
             <div class="footer-content">
-                <p>
-                    <i class="fas fa-code"></i> Собрано с <i class="fas fa-heart"></i> для киберпространства
-                </p>
-                <p class="version">
-                    v2.0.1 | <span id="currentTime">00:00:00 UTC</span> | 
-                    <i class="fas fa-signal"></i> <span id="connectionStatus">ПОДКЛЮЧЕНИЕ...</span>
-                </p>
+                <p><i class="fas fa-code"></i> CyberChat v2.0 | Реальный Supabase чат</p>
+                <p id="connectionInfo">Статус: Загрузка...</p>
             </div>
         </footer>
     </div>
 
-    <!-- Скрипты -->
+    <!-- Подключаем Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
-    <script src="auth.js"></script>
-    <script src="chat.js"></script>
+    
+    <script>
+        // === КОНФИГУРАЦИЯ SUPABASE ===
+        // ЗАМЕНИТЕ ЭТИ ДАННЫЕ НА СВОИ С SUPABASE!
+        const SUPABASE_URL = 'https://ваш-проект.supabase.co'; // Ваш URL
+        const SUPABASE_KEY = 'ваш-anon-key'; // Ваш anon key
+        
+        // === ОСНОВНОЙ КОД ===
+        let supabase = null;
+        let currentUser = null;
+        let isConnected = false;
+        let messages = [];
+        let onlineUsers = new Set();
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
+
+        // Инициализация приложения
+        async function initApp() {
+            // Проверяем сохраненного пользователя
+            const savedUser = localStorage.getItem('chat_username');
+            if (savedUser) {
+                currentUser = savedUser;
+                showChatInterface();
+            }
+            
+            // Подключаемся к Supabase
+            await connectToSupabase();
+            
+            // Загружаем сообщения
+            await loadMessages();
+            
+            // Слушаем новые сообщения
+            setupRealtime();
+        }
+
+        // Подключение к Supabase
+        async function connectToSupabase() {
+            try {
+                if (!SUPABASE_URL.includes('ваш-проект')) {
+                    // Создаем клиент Supabase
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    
+                    // Проверяем подключение
+                    const { data, error } = await supabase.from('messages').select('count');
+                    
+                    if (error) {
+                        console.error('Ошибка подключения:', error);
+                        updateStatus('Ошибка подключения', 'error');
+                        // Переходим в локальный режим
+                        useLocalMode();
+                    } else {
+                        updateStatus('Подключено к Supabase', 'success');
+                        isConnected = true;
+                    }
+                } else {
+                    // Демо-режим (без реального Supabase)
+                    console.log('Демо-режим: используйте LocalStorage');
+                    updateStatus('Демо-режим (LocalStorage)', 'warning');
+                    useLocalMode();
+                }
+            } catch (error) {
+                console.error('Ошибка инициализации:', error);
+                useLocalMode();
+            }
+        }
+
+        // Локальный режим (если Supabase не настроен)
+        function useLocalMode() {
+            supabase = null;
+            isConnected = false;
+            updateStatus('Локальный режим', 'warning');
+            
+            // Загружаем сообщения из LocalStorage
+            const saved = localStorage.getItem('local_messages');
+            if (saved) {
+                messages = JSON.parse(saved);
+                renderMessages();
+            }
+        }
+
+        // Загрузка сообщений
+        async function loadMessages() {
+            if (isConnected && supabase) {
+                // Загружаем с Supabase
+                const { data, error } = await supabase
+                    .from('messages')
+                    .select('*')
+                    .order('created_at', { ascending: true })
+                    .limit(100);
+                    
+                if (!error && data) {
+                    messages = data;
+                    renderMessages();
+                }
+            }
+        }
+
+        // Настройка реального времени
+        function setupRealtime() {
+            if (!isConnected || !supabase) return;
+            
+            // Подписываемся на новые сообщения
+            supabase
+                .channel('public:messages')
+                .on('postgres_changes', 
+                    { event: 'INSERT', schema: 'public', table: 'messages' }, 
+                    (payload) => {
+                        // Добавляем новое сообщение
+                        messages.push(payload.new);
+                        renderMessage(payload.new);
+                        updateStats();
+                    }
+                )
+                .subscribe();
+        }
+
+        // Отправка сообщения
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (!text || !currentUser) return;
+            
+            const message = {
+                username: currentUser,
+                message: text,
+                created_at: new Date().toISOString()
+            };
+            
+            // Очищаем поле ввода
+            input.value = '';
+            
+            if (isConnected && supabase) {
+                // Отправляем в Supabase
+                const { data, error } = await supabase
+                    .from('messages')
+                    .insert([message]);
+                    
+                if (error) {
+                    console.error('Ошибка отправки:', error);
+                    // Сохраняем локально
+                    saveLocalMessage(message);
+                }
+            } else {
+                // Локальное сохранение
+                saveLocalMessage(message);
+            }
+        }
+
+        // Локальное сохранение сообщения
+        function saveLocalMessage(message) {
+            message.id = 'local_' + Date.now();
+            messages.push(message);
+            renderMessage(message);
+            updateStats();
+            
+            // Сохраняем в LocalStorage
+            localStorage.setItem('local_messages', JSON.stringify(messages.slice(-100)));
+        }
+
+        // Отображение сообщений
+        function renderMessages() {
+            const container = document.getElementById('messagesContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            messages.forEach(msg => {
+                renderMessage(msg, false);
+            });
+            
+            scrollToBottom();
+            updateStats();
+        }
+
+        function renderMessage(msg, scroll = true) {
+            const container = document.getElementById('messagesContainer');
+            if (!container) return;
+            
+            const isCurrentUser = msg.username === currentUser;
+            const time = new Date(msg.created_at).toLocaleTimeString([], { 
+                hour: '2-digit', minute: '2-digit' 
+            });
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
+            messageEl.innerHTML = `
+                <div class="message-header">
+                    <span class="message-username">${msg.username}</span>
+                    <span class="message-time">${time}</span>
+                    ${isCurrentUser ? '<span class="user-badge">ВЫ</span>' : ''}
+                </div>
+                <div class="message-content">
+                    <p>${escapeHtml(msg.message)}</p>
+                </div>
+            `;
+            
+            container.appendChild(messageEl);
+            
+            if (scroll) {
+                scrollToBottom();
+            }
+        }
+
+        // Вход в чат
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username) {
+                alert('Введите имя пользователя!');
+                return;
+            }
+            
+            currentUser = username;
+            localStorage.setItem('chat_username', username);
+            
+            // Добавляем приветственное сообщение
+            const welcomeMsg = {
+                id: 'welcome',
+                username: 'System',
+                message: `Добро пожаловать, ${username}!`,
+                created_at: new Date().toISOString()
+            };
+            
+            messages.push(welcomeMsg);
+            renderMessage(welcomeMsg);
+            
+            showChatInterface();
+            closeModal();
+        }
+
+        // Выход
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('chat_username');
+            
+            document.getElementById('loginBtn').style.display = 'block';
+            document.getElementById('messageInputContainer').style.display = 'none';
+            
+            // Сообщение о выходе
+            const byeMsg = {
+                id: 'bye',
+                username: 'System',
+                message: 'Вы вышли из чата',
+                created_at: new Date().toISOString()
+            };
+            
+            messages.push(byeMsg);
+            renderMessage(byeMsg);
+        }
+
+        // Показать интерфейс чата
+        function showChatInterface() {
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('messageInputContainer').style.display = 'block';
+            
+            // Показать пользователя
+            const userSection = document.getElementById('userSection');
+            userSection.innerHTML = `
+                <div class="user-display">
+                    <span>${currentUser}</span>
+                    <button class="cyber-btn small" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // Вспомогательные функции
+        function updateStatus(text, type = 'info') {
+            document.getElementById('statusText').textContent = text;
+            document.getElementById('connectionInfo').textContent = 'Статус: ' + text;
+            
+            const indicator = document.getElementById('connectionStatus');
+            indicator.className = 'pulse ' + type;
+        }
+
+        function updateStats() {
+            document.getElementById('messageCount').textContent = messages.length;
+            document.getElementById('onlineCount').textContent = onlineUsers.size || 1;
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('messagesContainer');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Управление модалкой
+        function openModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        // Очистка локальных сообщений
+        function clearLocalMessages() {
+            if (confirm('Очистить историю чата?')) {
+                messages = [];
+                localStorage.removeItem('local_messages');
+                renderMessages();
+            }
+        }
+
+        // Тестовые данные
+        function loadTestMessages() {
+            const testMessages = [
+                { username: 'Neo', message: 'Добро пожаловать в Матрицу!', created_at: new Date().toISOString() },
+                { username: 'Trinity', message: 'Следуй за белым кроликом...', created_at: new Date().toISOString() },
+                { username: 'Morpheus', message: 'Что такое реальность?', created_at: new Date().toISOString() }
+            ];
+            
+            testMessages.forEach(msg => {
+                msg.id = 'test_' + Date.now() + Math.random();
+                messages.push(msg);
+                renderMessage(msg);
+            });
+            
+            updateStats();
+        }
+
+        // Обработчики событий
+        document.getElementById('loginBtn').addEventListener('click', openModal);
+        
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            sendMessage();
+        });
+        
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Клик вне модалки
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target.id === 'loginModal') {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>
