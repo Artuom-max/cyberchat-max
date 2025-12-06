@@ -4,186 +4,635 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberChat MAX | Рабочий чат</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        /* ========== ВСЕ СТИЛИ В ОДНОМ ФАЙЛЕ ========== */
+        :root {
+            --cyber-primary: #00ff9d;
+            --cyber-secondary: #7700ff;
+            --cyber-accent: #ff0055;
+            --cyber-dark: #0a0a0f;
+            --cyber-gray: #1a1a2e;
+            --cyber-light: #e0e0ff;
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Courier New', monospace;
-            background: #0a0a0f;
-            color: white;
+            font-family: 'Roboto Mono', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-light);
             min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
         }
         
-        .container { max-width: 800px; margin: 0 auto; }
-        
+        /* ХЕДЕР */
         .header {
             text-align: center;
-            padding: 30px;
-            background: #1a1a2e;
-            border: 2px solid #00ff9d;
+            padding: 20px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid var(--cyber-primary);
             border-radius: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
-        h1 {
-            color: #00ff9d;
-            font-size: 2.5rem;
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             margin-bottom: 10px;
         }
         
-        .chat-box {
-            background: #1a1a2e;
-            border: 2px solid #7700ff;
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--cyber-primary);
+        }
+        
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .accent { color: var(--cyber-accent); }
+        
+        /* ОСНОВНОЙ КОНТЕНТ */
+        .chat-wrapper {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-wrapper { grid-template-columns: 1fr; }
+        }
+        
+        /* ПАНЕЛИ */
+        .panel {
+            background: rgba(26, 26, 46, 0.7);
+            border: 2px solid var(--cyber-primary);
             border-radius: 15px;
             padding: 20px;
+        }
+        
+        .panel h2 {
+            color: var(--cyber-primary);
+            margin-bottom: 15px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* ПОЛЬЗОВАТЕЛИ */
+        .user-list {
+            margin-bottom: 20px;
+        }
+        
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--cyber-dark);
+        }
+        
+        /* СООБЩЕНИЯ */
+        .messages {
             height: 400px;
             overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
             margin-bottom: 20px;
         }
         
         .message {
+            margin-bottom: 15px;
+            padding: 15px;
             background: rgba(0, 255, 157, 0.1);
-            padding: 10px;
-            margin-bottom: 10px;
             border-radius: 10px;
-            border-left: 3px solid #00ff9d;
+            border-left: 3px solid var(--cyber-primary);
         }
         
-        .input-area {
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: var(--cyber-primary);
+            font-weight: bold;
+        }
+        
+        /* ФОРМА ВВОДА */
+        .message-form {
             display: flex;
             gap: 10px;
         }
         
-        input {
+        .message-input {
             flex: 1;
             padding: 15px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid #00ff9d;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--cyber-primary);
             border-radius: 10px;
             color: white;
             font-size: 1rem;
         }
         
-        button {
+        .send-btn {
             padding: 15px 30px;
-            background: linear-gradient(45deg, #00ff9d, #7700ff);
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
             border: none;
             border-radius: 10px;
-            color: black;
+            color: var(--cyber-dark);
             font-weight: bold;
             cursor: pointer;
         }
         
+        /* МОДАЛКА */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--cyber-gray);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid var(--cyber-primary);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal h2 {
+            color: var(--cyber-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--cyber-primary);
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
+            border: none;
+            border-radius: 10px;
+            color: var(--cyber-dark);
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* ФУТЕР */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+        }
+        
+        /* СТАТУС */
         .status {
             text-align: center;
-            padding: 10px;
-            color: #00ff9d;
-            margin-top: 20px;
+            margin: 10px 0;
+            color: var(--cyber-primary);
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- ХЕДЕР -->
         <div class="header">
-            <h1>⚡ CyberChat MAX</h1>
-            <p style="color: #aaa;">Проверка подключения...</p>
-        </div>
-        
-        <div class="chat-box" id="chatBox">
-            <div class="message">
-                <strong>System:</strong> Загрузка чата...
+            <div class="logo">
+                <i class="fas fa-satellite-dish"></i>
+                <h1>CYBER<span class="accent">MAX</span>CHAT</h1>
+            </div>
+            <div class="status" id="status">
+                <span id="statusText">Готов к работе!</span>
             </div>
         </div>
         
-        <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Введите сообщение..." disabled>
-            <button id="sendBtn" onclick="sendMessage()">Отправить</button>
+        <!-- ОСНОВНОЙ КОНТЕНТ -->
+        <div class="chat-wrapper">
+            <!-- ЛЕВАЯ ПАНЕЛЬ -->
+            <div class="panel">
+                <h2><i class="fas fa-users"></i> ОНЛАЙН</h2>
+                <div class="user-list" id="userList">
+                    <div class="user-card">
+                        <div class="user-avatar">S</div>
+                        <div>
+                            <div style="font-weight: bold;">System</div>
+                            <div style="color: var(--cyber-primary); font-size: 0.9rem;">● ONLINE</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Сообщений:</span>
+                        <span id="messageCount" style="color: var(--cyber-primary); font-weight: bold;">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Онлайн:</span>
+                        <span id="onlineCount" style="color: var(--cyber-primary); font-weight: bold;">1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ОСНОВНОЙ ЧАТ -->
+            <div class="panel">
+                <h2><i class="fas fa-comments"></i> ОБЩИЙ ЧАТ</h2>
+                
+                <!-- СООБЩЕНИЯ -->
+                <div class="messages" id="messages">
+                    <div class="message">
+                        <div class="message-header">
+                            <span>System</span>
+                            <span style="color: #aaa; font-size: 0.9rem;">00:00</span>
+                        </div>
+                        <p>Добро пожаловать в CyberChat! Нажмите "Войти в чат" чтобы начать общение.</p>
+                    </div>
+                </div>
+                
+                <!-- ПОЛЕ ВВОДА (показывается после входа) -->
+                <div id="messageFormContainer" style="display: none;">
+                    <form id="messageForm" class="message-form">
+                        <input type="text" id="messageInput" class="message-input" placeholder="Введите сообщение..." autocomplete="off">
+                        <button type="submit" class="send-btn">
+                            <i class="fas fa-paper-plane"></i> Отправить
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- КНОПКА ВХОДА -->
+                <div id="loginButtonContainer" style="text-align: center;">
+                    <button id="openLoginBtn" class="send-btn" style="padding: 15px 40px; margin-top: 20px;">
+                        <i class="fas fa-sign-in-alt"></i> ВОЙТИ В ЧАТ
+                    </button>
+                </div>
+            </div>
         </div>
         
-        <button onclick="login()" style="width: 100%; margin-top: 20px; background: #ff0055;">
-            🔐 Войти в чат
-        </button>
-        
-        <div class="status" id="status">
-            Статус: Проверка...
+        <!-- ФУТЕР -->
+        <div class="footer">
+            <p>CyberChat MAX v2.0 | Рабочий чат</p>
+            <p id="connectionInfo">✅ Чат готов к работе!</p>
+        </div>
+    </div>
+    
+    <!-- МОДАЛКА ВХОДА -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-astronaut"></i> ВХОД В ЧАТ</h2>
+            
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Ваше имя" required>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Пароль (любой)" required>
+            </div>
+            
+            <button onclick="login()" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> ПОДКЛЮЧИТЬСЯ
+            </button>
+            
+            <div style="text-align: center; margin-top: 20px; color: #aaa; font-size: 0.9rem;">
+                <p><i class="fas fa-info-circle"></i> Имя должно быть уникальным</p>
+            </div>
         </div>
     </div>
 
+    <!-- ========== ВЕСЬ JAVASCRIPT В ОДНОМ ФАЙЛЕ ========== -->
     <script>
-        // ========== ПРОСТОЙ РАБОЧИЙ ЧАТ ==========
+        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
         let messages = [];
         let currentUser = null;
+        let users = new Set(['System']);
         
-        // Проверяем загрузку
-        console.log('✅ Страница загружена!');
-        document.getElementById('status').textContent = 'Статус: Готов';
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Страница загружена!');
+            initChat();
+        });
+        
+        function initChat() {
+            // Загружаем сохраненные сообщения
+            loadMessages();
+            
+            // Настраиваем обработчики событий
+            setupEventListeners();
+            
+            // Обновляем статистику
+            updateStats();
+            
+            // Показываем готовность
+            document.getElementById('statusText').textContent = 'Готов к работе!';
+            document.getElementById('connectionInfo').textContent = '✅ Чат готов к работе!';
+        }
+        
+        function setupEventListeners() {
+            // Кнопка открытия модалки
+            document.getElementById('openLoginBtn').addEventListener('click', function() {
+                document.getElementById('loginModal').style.display = 'flex';
+                document.getElementById('username').focus();
+            });
+            
+            // Закрытие модалки по клику вне
+            document.getElementById('loginModal').addEventListener('click', function(e) {
+                if (e.target.id === 'loginModal') {
+                    document.getElementById('loginModal').style.display = 'none';
+                }
+            });
+            
+            // Отправка сообщения по форме
+            document.getElementById('messageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendMessage();
+            });
+            
+            // Отправка по Enter
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
         
         function login() {
-            const username = prompt('Введите ваше имя:');
-            if (username && username.length > 2) {
-                currentUser = username;
-                document.getElementById('status').textContent = `Привет, ${username}!`;
-                document.getElementById('messageInput').disabled = false;
-                document.getElementById('messageInput').placeholder = `Пишите, ${username}...`;
-                
-                // Добавляем приветствие
-                addMessage('System', `👋 Добро пожаловать, ${username}!`);
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            const username = usernameInput.value.trim();
+            
+            if (!username || username.length < 3) {
+                alert('Введите имя (минимум 3 символа)!');
+                usernameInput.focus();
+                return;
             }
+            
+            if (username.length > 20) {
+                alert('Имя слишком длинное (максимум 20 символов)');
+                return;
+            }
+            
+            // Сохраняем пользователя
+            currentUser = username;
+            localStorage.setItem('cyberchat_user', username);
+            
+            // Очищаем поля
+            usernameInput.value = '';
+            passwordInput.value = '';
+            
+            // Закрываем модалку
+            document.getElementById('loginModal').style.display = 'none';
+            
+            // Показываем интерфейс чата
+            showChatInterface();
+            
+            // Добавляем приветствие
+            addMessage('System', `👋 Добро пожаловать, ${username}! Вы вошли в чат.`);
+            
+            // Добавляем пользователя в список
+            addUser(username);
+            
+            // Обновляем статистику
+            updateStats();
+        }
+        
+        function showChatInterface() {
+            // Скрываем кнопку входа
+            document.getElementById('loginButtonContainer').style.display = 'none';
+            
+            // Показываем поле ввода
+            document.getElementById('messageFormContainer').style.display = 'block';
+            
+            // Фокус на поле ввода
+            setTimeout(() => {
+                document.getElementById('messageInput').focus();
+            }, 100);
+            
+            // Обновляем статус
+            document.getElementById('statusText').textContent = `Вы вошли как: ${currentUser}`;
         }
         
         function sendMessage() {
             if (!currentUser) {
                 alert('Сначала войдите в чат!');
-                login();
+                document.getElementById('loginModal').style.display = 'flex';
                 return;
             }
             
             const input = document.getElementById('messageInput');
             const text = input.value.trim();
             
-            if (text) {
-                addMessage(currentUser, text);
-                input.value = '';
-                
-                // Имитируем ответ
-                setTimeout(() => {
-                    const replies = ['Привет!', 'Как дела?', 'Интересно!', 'Согласен'];
-                    const randomReply = replies[Math.floor(Math.random() * replies.length)];
-                    addMessage('Bot', randomReply);
-                }, 1000);
+            if (!text) {
+                alert('Введите сообщение!');
+                return;
             }
+            
+            // Добавляем сообщение
+            addMessage(currentUser, text);
+            
+            // Очищаем поле ввода
+            input.value = '';
+            
+            // Сохраняем в историю
+            saveMessage(currentUser, text);
+            
+            // Имитируем ответы
+            simulateResponse();
         }
         
         function addMessage(user, text) {
-            const chatBox = document.getElementById('chatBox');
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const messagesDiv = document.getElementById('messages');
+            const time = new Date().toLocaleTimeString('ru-RU', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
             
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             messageDiv.innerHTML = `
-                <strong>${user}:</strong> ${text}
-                <span style="float: right; color: #aaa; font-size: 0.9rem;">${time}</span>
+                <div class="message-header">
+                    <span>${user}</span>
+                    <span style="color: #aaa; font-size: 0.9rem;">${time}</span>
+                </div>
+                <p>${escapeHtml(text)}</p>
             `;
             
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
             
-            // Сохраняем в историю
-            messages.push({ user, text, time });
+            // Обновляем счетчик
+            updateMessageCount();
         }
         
-        // Настройка Enter для отправки
-        document.getElementById('messageInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
+        function addUser(username) {
+            if (!users.has(username)) {
+                users.add(username);
+                
+                const userList = document.getElementById('userList');
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card';
+                userCard.innerHTML = `
+                    <div class="user-avatar">${username.charAt(0)}</div>
+                    <div>
+                        <div style="font-weight: bold;">${username}</div>
+                        <div style="color: var(--cyber-primary); font-size: 0.9rem;">● ONLINE</div>
+                    </div>
+                `;
+                
+                userList.appendChild(userCard);
+                updateOnlineCount();
             }
-        });
+        }
         
-        // Добавляем тестовые сообщения
-        setTimeout(() => {
-            addMessage('System', '💻 Чат готов к работе!');
-            addMessage('System', 'Нажмите "Войти в чат" чтобы начать общение.');
-        }, 1000);
+        function saveMessage(user, text) {
+            const message = {
+                id: Date.now(),
+                user: user,
+                text: text,
+                time: new Date().toISOString()
+            };
+            
+            messages.push(message);
+            
+            // Сохраняем в LocalStorage (максимум 100 сообщений)
+            const savedMessages = messages.slice(-100);
+            localStorage.setItem('cyberchat_messages', JSON.stringify(savedMessages));
+        }
+        
+        function loadMessages() {
+            const saved = localStorage.getItem('cyberchat_messages');
+            if (saved) {
+                try {
+                    messages = JSON.parse(saved);
+                    // Очищаем старые сообщения (старше 7 дней)
+                    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                    messages = messages.filter(m => new Date(m.time).getTime() > sevenDaysAgo);
+                    
+                    // Восстанавливаем пользователей
+                    messages.forEach(m => {
+                        if (m.user !== 'System' && !users.has(m.user)) {
+                            users.add(m.user);
+                        }
+                    });
+                } catch (e) {
+                    console.error('Ошибка загрузки сообщений:', e);
+                    messages = [];
+                }
+            }
+            
+            // Загружаем сохраненного пользователя
+            const savedUser = localStorage.getItem('cyberchat_user');
+            if (savedUser) {
+                currentUser = savedUser;
+                showChatInterface();
+                addUser(savedUser);
+                addMessage('System', `👋 С возвращением, ${savedUser}!`);
+            }
+        }
+        
+        function simulateResponse() {
+            // 30% шанс на ответ
+            if (Math.random() < 0.3) {
+                setTimeout(() => {
+                    const responses = [
+                        'Привет! Как дела?',
+                        'Интересное сообщение!',
+                        'Я тоже так думаю',
+                        'Продолжайте в том же духе!',
+                        '👍',
+                        '😊',
+                        'Отличный чат!'
+                    ];
+                    
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage('Bot', randomResponse);
+                    saveMessage('Bot', randomResponse);
+                }, 1000 + Math.random() * 2000);
+            }
+        }
+        
+        function updateStats() {
+            updateMessageCount();
+            updateOnlineCount();
+        }
+        
+        function updateMessageCount() {
+            document.getElementById('messageCount').textContent = messages.length;
+        }
+        
+        function updateOnlineCount() {
+            document.getElementById('onlineCount').textContent = users.size;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Автоматическое добавление тестовых сообщений при первом посещении
+        window.onload = function() {
+            if (messages.length === 0) {
+                setTimeout(() => {
+                    addMessage('System', '💻 Добро пожаловать в CyberChat MAX!');
+                    saveMessage('System', '💻 Добро пожаловать в CyberChat MAX!');
+                    
+                    setTimeout(() => {
+                        addMessage('System', '📱 Чат работает полностью в браузере');
+                        saveMessage('System', '📱 Чат работает полностью в браузере');
+                        
+                        setTimeout(() => {
+                            addMessage('System', '🚀 Нажмите "Войти в чат" чтобы начать общение!');
+                            saveMessage('System', '🚀 Нажмите "Войти в чат" чтобы начать общение!');
+                        }, 1000);
+                    }, 1000);
+                }, 500);
+            }
+        };
     </script>
 </body>
 </html>
