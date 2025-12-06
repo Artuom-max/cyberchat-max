@@ -7,7 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* Стили из предыдущего примера (скопируйте весь CSS блок) */
+        /* СБРОС И БАЗОВЫЕ СТИЛИ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --cyber-primary: #00ff9d;
             --cyber-secondary: #7700ff;
@@ -16,37 +22,576 @@
             --cyber-gray: #1a1a2e;
             --cyber-light: #e0e0ff;
         }
-        
-        /* ... весь CSS код из предыдущего примера ... */
-        /* (скопируйте ВСЕ стили сюда) */
-        
-        /* Дополнительные стили для реального чата */
-        .typing-indicator {
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* АНИМАЦИИ */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--cyber-primary); }
+            50% { box-shadow: 0 0 20px var(--cyber-primary); }
+        }
+
+        /* КОНТЕЙНЕР */
+        .cyber-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ХЕДЕР */
+        .cyber-header {
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid var(--cyber-primary);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
             color: var(--cyber-primary);
-            font-style: italic;
-            padding: 10px;
-            display: none;
+            animation: glow 2s infinite;
         }
-        
-        .message.sent {
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+        }
+
+        .accent {
+            color: var(--cyber-accent);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        .pulse {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .pulse.success { background: var(--cyber-primary); }
+        .pulse.warning { background: #ffaa00; }
+        .pulse.error { background: var(--cyber-accent); }
+
+        /* КНОПКИ */
+        .cyber-btn {
+            background: transparent;
+            border: 2px solid var(--cyber-primary);
+            color: var(--cyber-primary);
+            padding: 10px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cyber-btn:hover {
+            background: var(--cyber-primary);
+            color: var(--cyber-dark);
+            box-shadow: 0 0 20px var(--cyber-primary);
+        }
+
+        .cyber-btn.small {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+
+        /* ОСНОВНАЯ СЕТКА */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+            flex: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+        }
+
+        /* ПАНЕЛИ */
+        .cyber-panel {
+            background: rgba(26, 26, 46, 0.7);
+            border: 2px solid var(--cyber-primary);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .cyber-panel h2 {
+            color: var(--cyber-primary);
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--cyber-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* СПИСОК ПОЛЬЗОВАТЕЛЕЙ */
+        .users-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--cyber-primary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--cyber-dark);
+        }
+
+        .user-info h4 {
+            color: var(--cyber-primary);
+            margin-bottom: 5px;
+        }
+
+        .user-status {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .status-online {
+            color: var(--cyber-primary);
+        }
+
+        /* СТАТИСТИКА */
+        .panel-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--cyber-primary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat i {
+            font-size: 2rem;
+            color: var(--cyber-primary);
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--cyber-primary);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* ЧАТ */
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            margin-bottom: 20px;
+        }
+
+        .channel-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .channel-tag {
+            background: var(--cyber-primary);
+            color: var(--cyber-dark);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .encryption {
+            color: var(--cyber-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* СООБЩЕНИЯ */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            max-height: 500px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .message-username {
+            color: var(--cyber-primary);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .message-time {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .message-content {
             background: rgba(0, 255, 157, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid var(--cyber-primary);
+            word-wrap: break-word;
         }
-        
-        .message.received {
+
+        .message.sent .message-content {
+            background: rgba(0, 255, 157, 0.2);
+            border-left-color: var(--cyber-primary);
+        }
+
+        .message.received .message-content {
             background: rgba(119, 0, 255, 0.1);
+            border-left-color: var(--cyber-secondary);
+        }
+
+        .user-badge {
+            background: var(--cyber-accent);
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        /* ПОЛЕ ВВОДА */
+        .message-input-container {
+            margin-top: auto;
+        }
+
+        .input-wrapper {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--cyber-primary);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 15px;
+            color: var(--cyber-light);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .input-actions {
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--cyber-light);
+            cursor: pointer;
+            padding: 10px;
+            font-size: 1.2rem;
+        }
+
+        .icon-btn:hover {
+            color: var(--cyber-primary);
+        }
+
+        .send-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
+            border: none;
+            border-radius: 10px;
+            color: var(--cyber-dark);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--cyber-primary);
+        }
+
+        /* СИСТЕМНЫЕ СООБЩЕНИЯ */
+        .system-message {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(119, 0, 255, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid var(--cyber-secondary);
+            margin-bottom: 20px;
+        }
+
+        .system-message i {
+            color: var(--cyber-secondary);
+            font-size: 1.5rem;
+        }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .cyber-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--cyber-gray);
+            border: 3px solid var(--cyber-primary);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: rgba(0, 255, 157, 0.1);
+            padding: 20px;
+            border-bottom: 2px solid var(--cyber-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: var(--cyber-primary);
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--cyber-light);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: var(--cyber-accent);
+        }
+
+        /* ФОРМА */
+        .auth-form {
+            padding: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--cyber-primary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            color: var(--cyber-primary);
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--cyber-light);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+        }
+
+        .input-group input:focus {
+            outline: none;
+        }
+
+        .auth-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--cyber-primary), var(--cyber-secondary));
+            border: none;
+            border-radius: 10px;
+            color: var(--cyber-dark);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .auth-submit:hover {
+            box-shadow: 0 0 30px var(--cyber-primary);
+        }
+
+        .auth-footer {
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* ФУТЕР */
+        .cyber-footer {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid var(--cyber-primary);
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-content p {
+            margin: 5px 0;
+        }
+
+        /* ПОЛОСА ПРОКРУТКИ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-secondary);
         }
     </style>
 </head>
 <body>
     <div class="cyber-container">
-        <!-- Хедер -->
+        <!-- ХЕДЕР -->
         <header class="cyber-header">
             <div class="logo">
                 <i class="fas fa-satellite-dish"></i>
                 <h1>CYBER<span class="accent">MAX</span>CHAT</h1>
                 <div class="status-indicator">
                     <div class="pulse" id="connectionStatus"></div>
-                    <span id="statusText">Подключение...</span>
+                    <span id="statusText">Загрузка...</span>
                 </div>
             </div>
             <div class="user-section" id="userSection">
@@ -56,9 +601,9 @@
             </div>
         </header>
 
-        <!-- Основной контейнер -->
+        <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
         <main class="main-grid">
-            <!-- Левая панель -->
+            <!-- ЛЕВАЯ ПАНЕЛЬ - ПОЛЬЗОВАТЕЛИ -->
             <aside class="cyber-panel users-panel">
                 <h2><i class="fas fa-users"></i> ОНЛАЙН</h2>
                 <div class="users-list" id="usersList">
@@ -91,7 +636,7 @@
                 </div>
             </aside>
 
-            <!-- Центр - Чат -->
+            <!-- ЦЕНТР - ЧАТ -->
             <section class="cyber-panel chat-panel">
                 <div class="chat-header">
                     <h2><i class="fas fa-comment-dots"></i> ОБЩИЙ КАНАЛ</h2>
@@ -110,10 +655,6 @@
                     </div>
                 </div>
                 
-                <div class="typing-indicator" id="typingIndicator">
-                    Кто-то печатает...
-                </div>
-                
                 <div class="message-input-container" id="messageInputContainer" style="display: none;">
                     <form id="messageForm" class="message-form">
                         <div class="input-wrapper">
@@ -125,7 +666,7 @@
                                 maxlength="500"
                             >
                             <div class="input-actions">
-                                <button type="button" class="icon-btn" onclick="toggleEmoji()" title="Эмодзи">
+                                <button type="button" class="icon-btn" title="Эмодзи">
                                     <i class="far fa-smile"></i>
                                 </button>
                             </div>
@@ -137,33 +678,30 @@
                 </div>
             </section>
 
-            <!-- Правая панель -->
+            <!-- ПРАВАЯ ПАНЕЛЬ - ИНФО -->
             <aside class="cyber-panel info-panel">
                 <h2><i class="fas fa-info-circle"></i> ИНФОРМАЦИЯ</h2>
                 <p>Это реальный чат на Supabase.</p>
                 <p>Сообщения сохраняются в базе данных.</p>
                 <p>Обновляется в реальном времени.</p>
                 
-                <div class="control-panel">
-                    <button class="cyber-btn small" onclick="clearLocalMessages()">
-                        <i class="fas fa-trash"></i> Очистить кэш
-                    </button>
-                    <button class="cyber-btn small" onclick="loadTestMessages()">
-                        <i class="fas fa-bolt"></i> Тестовые данные
+                <div class="control-panel" style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="cyber-btn small" onclick="clearMessages()">
+                        <i class="fas fa-trash"></i> Очистить
                     </button>
                 </div>
             </aside>
         </main>
 
-        <!-- Модалка входа -->
-        <div id="loginModal" class="cyber-modal" style="display: none;">
+        <!-- МОДАЛКА ВХОДА -->
+        <div id="loginModal" class="cyber-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2><i class="fas fa-user-astronaut"></i> ВХОД В ЧАТ</h2>
                     <button class="close-btn" onclick="closeModal()">&times;</button>
                 </div>
                 
-                <div class="auth-form active">
+                <div class="auth-form">
                     <div class="input-group">
                         <i class="fas fa-user"></i>
                         <input type="text" id="username" placeholder="ВАШЕ ИМЯ" required>
@@ -183,7 +721,7 @@
             </div>
         </div>
 
-        <!-- Футер -->
+        <!-- ФУТЕР -->
         <footer class="cyber-footer">
             <div class="footer-content">
                 <p><i class="fas fa-code"></i> CyberChat v2.0 | Реальный Supabase чат</p>
@@ -192,34 +730,36 @@
         </footer>
     </div>
 
-    <!-- Подключаем Supabase -->
+    <!-- ПОДКЛЮЧАЕМ SUPABASE -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
     <script>
-        // === КОНФИГУРАЦИЯ SUPABASE ===
-        // ЗАМЕНИТЕ ЭТИ ДАННЫЕ НА СВОИ С SUPABASE!
-        const SUPABASE_URL = 'https://ваш-проект.supabase.co'; // Ваш URL
-        const SUPABASE_KEY = 'ваш-anon-key'; // Ваш anon key
+        // === КОНФИГУРАЦИЯ SUPABASE (ВАШИ ДАННЫЕ) ===
+        const SUPABASE_URL = 'https://ngbzrxcpquhumiwaasxt.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nYnpyeGNwcXVodW1pd2Fhc3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMDk5ODgsImV4cCI6MjA4MDU4NTk4OH0.0hy0NAPg5sm8tzkOArytWcg2x2oV3uMuTzzN1Bgtwds';
         
-        // === ОСНОВНОЙ КОД ===
+        // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
         let supabase = null;
         let currentUser = null;
         let isConnected = false;
         let messages = [];
         let onlineUsers = new Set();
 
-        // Инициализация при загрузке
+        // ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ
         document.addEventListener('DOMContentLoaded', function() {
             initApp();
         });
 
-        // Инициализация приложения
+        // ОСНОВНАЯ ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ
         async function initApp() {
+            console.log('🚀 Инициализация CyberChat...');
+            
             // Проверяем сохраненного пользователя
-            const savedUser = localStorage.getItem('chat_username');
+            const savedUser = localStorage.getItem('cyberchat_username');
             if (savedUser) {
                 currentUser = savedUser;
                 showChatInterface();
+                showNotification(`С возвращением, ${currentUser}!`, 'success');
             }
             
             // Подключаемся к Supabase
@@ -230,95 +770,138 @@
             
             // Слушаем новые сообщения
             setupRealtime();
+            
+            // Настраиваем обработчики событий
+            setupEventListeners();
         }
 
-        // Подключение к Supabase
+        // ПОДКЛЮЧЕНИЕ К SUPABASE
         async function connectToSupabase() {
             try {
-                if (!SUPABASE_URL.includes('ваш-проект')) {
-                    // Создаем клиент Supabase
-                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    
-                    // Проверяем подключение
-                    const { data, error } = await supabase.from('messages').select('count');
-                    
-                    if (error) {
-                        console.error('Ошибка подключения:', error);
-                        updateStatus('Ошибка подключения', 'error');
-                        // Переходим в локальный режим
-                        useLocalMode();
-                    } else {
-                        updateStatus('Подключено к Supabase', 'success');
-                        isConnected = true;
-                    }
-                } else {
-                    // Демо-режим (без реального Supabase)
-                    console.log('Демо-режим: используйте LocalStorage');
-                    updateStatus('Демо-режим (LocalStorage)', 'warning');
+                console.log('🔗 Подключение к Supabase...');
+                updateStatus('Подключение...', 'warning');
+                
+                // Создаем клиент Supabase
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                // Проверяем подключение
+                const { data, error } = await supabase
+                    .from('messages')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    console.error('❌ Ошибка подключения:', error);
+                    updateStatus('Ошибка подключения', 'error');
                     useLocalMode();
+                } else {
+                    console.log('✅ Успешное подключение к Supabase!');
+                    updateStatus('Подключено к Supabase', 'success');
+                    isConnected = true;
                 }
             } catch (error) {
-                console.error('Ошибка инициализации:', error);
+                console.error('❌ Ошибка инициализации:', error);
+                updateStatus('Ошибка подключения', 'error');
                 useLocalMode();
             }
         }
 
-        // Локальный режим (если Supabase не настроен)
+        // ЛОКАЛЬНЫЙ РЕЖИМ (ЕСЛИ SUPABASE НЕ РАБОТАЕТ)
         function useLocalMode() {
+            console.log('🔧 Переход в локальный режим...');
             supabase = null;
             isConnected = false;
             updateStatus('Локальный режим', 'warning');
             
             // Загружаем сообщения из LocalStorage
-            const saved = localStorage.getItem('local_messages');
+            const saved = localStorage.getItem('cyberchat_messages');
             if (saved) {
-                messages = JSON.parse(saved);
-                renderMessages();
-            }
-        }
-
-        // Загрузка сообщений
-        async function loadMessages() {
-            if (isConnected && supabase) {
-                // Загружаем с Supabase
-                const { data, error } = await supabase
-                    .from('messages')
-                    .select('*')
-                    .order('created_at', { ascending: true })
-                    .limit(100);
-                    
-                if (!error && data) {
-                    messages = data;
+                try {
+                    messages = JSON.parse(saved);
                     renderMessages();
+                    showNotification('Загружены локальные сообщения', 'info');
+                } catch (e) {
+                    console.error('Ошибка загрузки локальных сообщений:', e);
                 }
             }
         }
 
-        // Настройка реального времени
+        // ЗАГРУЗКА СООБЩЕНИЙ
+        async function loadMessages() {
+            console.log('📥 Загрузка сообщений...');
+            
+            if (isConnected && supabase) {
+                // Загружаем с Supabase
+                try {
+                    const { data, error } = await supabase
+                        .from('messages')
+                        .select('*')
+                        .order('created_at', { ascending: true })
+                        .limit(100);
+                    
+                    if (error) {
+                        console.error('Ошибка загрузки сообщений:', error);
+                        showNotification('Ошибка загрузки сообщений', 'error');
+                    } else if (data) {
+                        messages = data;
+                        renderMessages();
+                        console.log(`✅ Загружено ${messages.length} сообщений`);
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                }
+            }
+        }
+
+        // НАСТРОЙКА REAL-TIME
         function setupRealtime() {
-            if (!isConnected || !supabase) return;
+            if (!isConnected || !supabase) {
+                console.log('⚠️ Realtime не доступен в локальном режиме');
+                return;
+            }
+            
+            console.log('🔔 Настройка Realtime...');
             
             // Подписываемся на новые сообщения
             supabase
-                .channel('public:messages')
+                .channel('cyberchat_messages')
                 .on('postgres_changes', 
-                    { event: 'INSERT', schema: 'public', table: 'messages' }, 
+                    { 
+                        event: 'INSERT', 
+                        schema: 'public', 
+                        table: 'messages' 
+                    }, 
                     (payload) => {
-                        // Добавляем новое сообщение
+                        console.log('🆕 Новое сообщение:', payload.new);
                         messages.push(payload.new);
                         renderMessage(payload.new);
                         updateStats();
+                        playMessageSound();
                     }
                 )
-                .subscribe();
+                .subscribe((status) => {
+                    if (status === 'SUBSCRIBED') {
+                        console.log('✅ Realtime подключен');
+                        updateStatus('Realtime активен', 'success');
+                    }
+                });
         }
 
-        // Отправка сообщения
+        // ОТПРАВКА СООБЩЕНИЯ
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const text = input.value.trim();
             
-            if (!text || !currentUser) return;
+            if (!text) {
+                showNotification('Введите сообщение!', 'warning');
+                return;
+            }
+            
+            if (!currentUser) {
+                showNotification('Сначала войдите в чат!', 'error');
+                openModal();
+                return;
+            }
             
             const message = {
                 username: currentUser,
@@ -329,15 +912,31 @@
             // Очищаем поле ввода
             input.value = '';
             
+            // Показываем сообщение сразу (оптимистичный UI)
+            const tempMessage = { ...message, id: 'temp_' + Date.now() };
+            messages.push(tempMessage);
+            renderMessage(tempMessage);
+            updateStats();
+            
             if (isConnected && supabase) {
                 // Отправляем в Supabase
-                const { data, error } = await supabase
-                    .from('messages')
-                    .insert([message]);
+                try {
+                    const { data, error } = await supabase
+                        .from('messages')
+                        .insert([message]);
                     
-                if (error) {
-                    console.error('Ошибка отправки:', error);
-                    // Сохраняем локально
+                    if (error) {
+                        console.error('Ошибка отправки:', error);
+                        showNotification('Ошибка отправки', 'error');
+                        // Сохраняем локально
+                        saveLocalMessage(message);
+                    } else {
+                        console.log('✅ Сообщение отправлено в Supabase');
+                        // Удаляем временное сообщение
+                        messages = messages.filter(m => m.id !== tempMessage.id);
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
                     saveLocalMessage(message);
                 }
             } else {
@@ -346,23 +945,40 @@
             }
         }
 
-        // Локальное сохранение сообщения
+        // СОХРАНЕНИЕ СООБЩЕНИЯ ЛОКАЛЬНО
         function saveLocalMessage(message) {
             message.id = 'local_' + Date.now();
-            messages.push(message);
-            renderMessage(message);
-            updateStats();
+            
+            // Обновляем ID временного сообщения
+            const tempIndex = messages.findIndex(m => m.id && m.id.startsWith('temp_'));
+            if (tempIndex !== -1) {
+                messages[tempIndex] = message;
+                renderMessages();
+            }
             
             // Сохраняем в LocalStorage
-            localStorage.setItem('local_messages', JSON.stringify(messages.slice(-100)));
+            localStorage.setItem('cyberchat_messages', JSON.stringify(messages.slice(-100)));
+            
+            showNotification('Сохранено локально', 'info');
         }
 
-        // Отображение сообщений
+        // ОТОБРАЖЕНИЕ ВСЕХ СООБЩЕНИЙ
         function renderMessages() {
             const container = document.getElementById('messagesContainer');
             if (!container) return;
             
+            // Убираем системное сообщение
             container.innerHTML = '';
+            
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="system-message">
+                        <i class="fas fa-robot"></i>
+                        <p>Нет сообщений. Будьте первым!</p>
+                    </div>
+                `;
+                return;
+            }
             
             messages.forEach(msg => {
                 renderMessage(msg, false);
@@ -372,20 +988,22 @@
             updateStats();
         }
 
+        // ОТОБРАЖЕНИЕ ОДНОГО СООБЩЕНИЯ
         function renderMessage(msg, scroll = true) {
             const container = document.getElementById('messagesContainer');
             if (!container) return;
             
             const isCurrentUser = msg.username === currentUser;
-            const time = new Date(msg.created_at).toLocaleTimeString([], { 
-                hour: '2-digit', minute: '2-digit' 
+            const time = new Date(msg.created_at).toLocaleTimeString('ru-RU', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
             });
             
             const messageEl = document.createElement('div');
             messageEl.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
             messageEl.innerHTML = `
                 <div class="message-header">
-                    <span class="message-username">${msg.username}</span>
+                    <span class="message-username">${escapeHtml(msg.username)}</span>
                     <span class="message-time">${time}</span>
                     ${isCurrentUser ? '<span class="user-badge">ВЫ</span>' : ''}
                 </div>
@@ -396,60 +1014,98 @@
             
             container.appendChild(messageEl);
             
+            // Убираем системное сообщение если есть
+            const systemMsg = container.querySelector('.system-message');
+            if (systemMsg && messages.length > 0) {
+                systemMsg.remove();
+            }
+            
             if (scroll) {
                 scrollToBottom();
             }
         }
 
-        // Вход в чат
+        // ВХОД В ЧАТ
         function login() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
             
             if (!username) {
-                alert('Введите имя пользователя!');
+                showNotification('Введите имя пользователя!', 'error');
+                usernameInput.focus();
                 return;
             }
             
+            if (username.length < 3) {
+                showNotification('Имя должно быть минимум 3 символа', 'error');
+                return;
+            }
+            
+            if (username.length > 20) {
+                showNotification('Имя слишком длинное (макс 20 символов)', 'error');
+                return;
+            }
+            
+            // Сохраняем пользователя
             currentUser = username;
-            localStorage.setItem('chat_username', username);
+            localStorage.setItem('cyberchat_username', username);
+            
+            // Очищаем поля
+            usernameInput.value = '';
+            passwordInput.value = '';
+            
+            // Показываем интерфейс чата
+            showChatInterface();
+            closeModal();
             
             // Добавляем приветственное сообщение
             const welcomeMsg = {
-                id: 'welcome',
+                id: 'welcome_' + Date.now(),
                 username: 'System',
-                message: `Добро пожаловать, ${username}!`,
+                message: `👋 Добро пожаловать, ${username}! Вы подключены к чату.`,
                 created_at: new Date().toISOString()
             };
             
             messages.push(welcomeMsg);
             renderMessage(welcomeMsg);
             
-            showChatInterface();
-            closeModal();
+            showNotification(`Добро пожаловать, ${username}!`, 'success');
+            updateStats();
         }
 
-        // Выход
+        // ВЫХОД ИЗ ЧАТА
         function logout() {
-            currentUser = null;
-            localStorage.removeItem('chat_username');
+            if (!currentUser) return;
             
-            document.getElementById('loginBtn').style.display = 'block';
+            const username = currentUser;
+            currentUser = null;
+            localStorage.removeItem('cyberchat_username');
+            
+            // Скрываем поле ввода
             document.getElementById('messageInputContainer').style.display = 'none';
+            
+            // Показываем кнопку входа
+            document.getElementById('loginBtn').style.display = 'block';
             
             // Сообщение о выходе
             const byeMsg = {
-                id: 'bye',
+                id: 'bye_' + Date.now(),
                 username: 'System',
-                message: 'Вы вышли из чата',
+                message: `👋 ${username} вышел из чата`,
                 created_at: new Date().toISOString()
             };
             
             messages.push(byeMsg);
             renderMessage(byeMsg);
+            
+            showNotification('Вы вышли из чата', 'info');
+            updateStats();
         }
 
-        // Показать интерфейс чата
+        // ПОКАЗАТЬ ИНТЕРФЕЙС ЧАТА
         function showChatInterface() {
             document.getElementById('loginBtn').style.display = 'none';
             document.getElementById('messageInputContainer').style.display = 'block';
@@ -457,16 +1113,60 @@
             // Показать пользователя
             const userSection = document.getElementById('userSection');
             userSection.innerHTML = `
-                <div class="user-display">
-                    <span>${currentUser}</span>
-                    <button class="cyber-btn small" onclick="logout()">
+                <div class="user-display" style="display: flex; align-items: center; gap: 15px;">
+                    <div class="user-avatar">${currentUser.charAt(0).toUpperCase()}</div>
+                    <div>
+                        <div style="font-weight: bold; color: var(--cyber-primary);">${currentUser}</div>
+                        <div style="font-size: 0.9rem; color: #aaa;">Онлайн</div>
+                    </div>
+                    <button class="cyber-btn small" onclick="logout()" title="Выйти">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
             `;
+            
+            // Фокус на поле ввода
+            setTimeout(() => {
+                const input = document.getElementById('messageInput');
+                if (input) input.focus();
+            }, 100);
         }
 
-        // Вспомогательные функции
+        // НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ
+        function setupEventListeners() {
+            // Кнопка входа
+            document.getElementById('loginBtn').addEventListener('click', openModal);
+            
+            // Форма отправки сообщения
+            document.getElementById('messageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendMessage();
+            });
+            
+            // Отправка по Enter
+            document.getElementById('messageInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Закрытие модалки по клику вне
+            document.getElementById('loginModal').addEventListener('click', function(e) {
+                if (e.target.id === 'loginModal') {
+                    closeModal();
+                }
+            });
+            
+            // Закрытие по ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        }
+
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
         function updateStatus(text, type = 'info') {
             document.getElementById('statusText').textContent = text;
             document.getElementById('connectionInfo').textContent = 'Статус: ' + text;
@@ -477,13 +1177,15 @@
 
         function updateStats() {
             document.getElementById('messageCount').textContent = messages.length;
-            document.getElementById('onlineCount').textContent = onlineUsers.size || 1;
+            document.getElementById('onlineCount').textContent = Math.max(1, onlineUsers.size);
         }
 
         function scrollToBottom() {
             const container = document.getElementById('messagesContainer');
             if (container) {
-                container.scrollTop = container.scrollHeight;
+                setTimeout(() => {
+                    container.scrollTop = container.scrollHeight;
+                }, 100);
             }
         }
 
@@ -493,62 +1195,120 @@
             return div.innerHTML;
         }
 
-        // Управление модалкой
+        function playMessageSound() {
+            // Простой звук уведомления
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
+                audio.volume = 0.3;
+                audio.play().catch(() => {});
+            } catch (e) {}
+        }
+
+        // УПРАВЛЕНИЕ МОДАЛКОЙ
         function openModal() {
             document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('username').focus();
         }
 
         function closeModal() {
             document.getElementById('loginModal').style.display = 'none';
         }
 
-        // Очистка локальных сообщений
-        function clearLocalMessages() {
-            if (confirm('Очистить историю чата?')) {
-                messages = [];
-                localStorage.removeItem('local_messages');
-                renderMessages();
-            }
+        // УВЕДОМЛЕНИЯ
+        function showNotification(message, type = 'info') {
+            console.log(`📢 ${type}: ${message}`);
+            
+            // Создаем уведомление
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                                  type === 'error' ? 'exclamation-circle' : 
+                                  type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            // Стили для уведомления
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'rgba(0, 255, 157, 0.2)' :
+                             type === 'error' ? 'rgba(255, 0, 85, 0.2)' :
+                             type === 'warning' ? 'rgba(255, 170, 0, 0.2)' : 'rgba(119, 0, 255, 0.2)'};
+                border: 2px solid ${type === 'success' ? 'var(--cyber-primary)' :
+                                   type === 'error' ? 'var(--cyber-accent)' :
+                                   type === 'warning' ? '#ffaa00' : 'var(--cyber-secondary)'};
+                color: var(--cyber-light);
+                padding: 15px 20px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                backdrop-filter: blur(10px);
+                z-index: 9999;
+                transform: translateX(150%);
+                transition: transform 0.3s ease;
+                max-width: 400px;
+                animation: slideIn 0.3s forwards;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Автоматическое скрытие
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+            
+            // Анимация
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    to { transform: translateX(0); }
+                }
+            `;
+            document.head.appendChild(style);
         }
 
-        // Тестовые данные
-        function loadTestMessages() {
-            const testMessages = [
-                { username: 'Neo', message: 'Добро пожаловать в Матрицу!', created_at: new Date().toISOString() },
-                { username: 'Trinity', message: 'Следуй за белым кроликом...', created_at: new Date().toISOString() },
-                { username: 'Morpheus', message: 'Что такое реальность?', created_at: new Date().toISOString() }
+        // ОЧИСТКА СООБЩЕНИЙ
+        function clearMessages() {
+            if (!confirm('Очистить всю историю чата? Это действие нельзя отменить.')) {
+                return;
+            }
+            
+            if (isConnected && supabase) {
+                // В реальном проекте нужно использовать .delete() с условием
+                showNotification('В демо-режиме нельзя очистить базу данных', 'warning');
+                return;
+            }
+            
+            // Очищаем локальные сообщения
+            messages = [];
+            localStorage.removeItem('cyberchat_messages');
+            renderMessages();
+            
+            showNotification('История чата очищена', 'success');
+        }
+
+        // ДЕМО-СООБЩЕНИЯ
+        function addDemoMessages() {
+            const demoMessages = [
+                { username: 'Neo', message: 'Добро пожаловать в Matrix чат!', created_at: new Date(Date.now() - 3600000).toISOString() },
+                { username: 'Trinity', message: 'Следуй за белым кроликом... 🐇', created_at: new Date(Date.now() - 1800000).toISOString() },
+                { username: 'Morpheus', message: 'Что такое реальность?', created_at: new Date(Date.now() - 900000).toISOString() },
+                { username: 'Oracle', message: 'Познай себя.', created_at: new Date().toISOString() }
             ];
             
-            testMessages.forEach(msg => {
-                msg.id = 'test_' + Date.now() + Math.random();
+            demoMessages.forEach(msg => {
+                msg.id = 'demo_' + Date.now() + '_' + Math.random();
                 messages.push(msg);
                 renderMessage(msg);
             });
             
             updateStats();
+            showNotification('Добавлены демо-сообщения', 'info');
         }
-
-        // Обработчики событий
-        document.getElementById('loginBtn').addEventListener('click', openModal);
-        
-        document.getElementById('messageForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            sendMessage();
-        });
-        
-        document.getElementById('messageInput').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // Клик вне модалки
-        document.getElementById('loginModal').addEventListener('click', function(e) {
-            if (e.target.id === 'loginModal') {
-                closeModal();
-            }
-        });
     </script>
 </body>
 </html>
